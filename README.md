@@ -79,6 +79,12 @@ A fully functional, responsive, full-stack eCommerce application built with Pyth
     - Store/Frontend: `http://127.0.0.1:8000/`
     - Admin Panel: `http://127.0.0.1:8000/admin/`
 
+## Screenshots of project how its works
+
+1.Home page
+
+"C:\Users\lasya\OneDrive\Pictures\Screenshots\home page.png"
+
 ## Project Structure
 
 - `core/` (or `ecommerce_project/`): Main Django project settings.
