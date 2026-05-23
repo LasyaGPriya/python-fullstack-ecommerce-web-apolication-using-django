@@ -1,0 +1,414 @@
+{% extends 'base.html' %}
+
+{% block title %}Order History - E-Shop{% endblock %}
+
+{% block content %}
+<style>
+    .order-history-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        background: #f8f9fa;
+        min-height: calc(100vh - 300px);
+    }
+
+    .order-history-header {
+        margin-bottom: 40px;
+    }
+
+    .order-history-header h1 {
+        font-size: 32px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 10px;
+    }
+
+    .order-history-header p {
+        color: #666;
+        font-size: 16px;
+    }
+
+    .orders-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .order-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .order-card:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        transform: translateY(-2px);
+    }
+
+    .order-card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .order-info-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .order-number {
+        font-size: 18px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .order-date {
+        font-size: 14px;
+        opacity: 0.9;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .order-total {
+        text-align: right;
+    }
+
+    .order-amount {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .order-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .order-status.paid {
+        background: rgba(76, 175, 80, 0.9);
+    }
+
+    .order-status.unpaid {
+        background: rgba(244, 67, 54, 0.9);
+    }
+
+    .order-card-body {
+        padding: 24px;
+    }
+
+    .order-items-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    .order-items-table thead {
+        background: #f5f5f5;
+        border-bottom: 2px solid #e0e0e0;
+    }
+
+    .order-items-table th {
+        padding: 12px 16px;
+        text-align: left;
+        font-weight: 600;
+        color: #1a1a1a;
+        font-size: 13px;
+        text-transform: uppercase;
+    }
+
+    .order-items-table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid #eee;
+        color: #555;
+    }
+
+    .order-items-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .product-name {
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+    .price-cell {
+        text-align: right;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .quantity-cell {
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .order-card-footer {
+        background: #f8f9fa;
+        padding: 16px 24px;
+        border-top: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .order-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .order-action-link {
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .order-action-primary {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .order-action-primary:hover {
+        background: #ff9500;
+        transform: translateY(-1px);
+    }
+
+    .order-action-secondary {
+        background: #e0e0e0;
+        color: #333;
+    }
+
+    .order-action-secondary:hover {
+        background: #d0d0d0;
+    }
+
+    .no-orders {
+        text-align: center;
+        padding: 80px 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .no-orders-icon {
+        font-size: 80px;
+        color: #ddd;
+        margin-bottom: 20px;
+    }
+
+    .no-orders h2 {
+        font-size: 24px;
+        color: #1a1a1a;
+        margin-bottom: 10px;
+    }
+
+    .no-orders p {
+        color: #999;
+        margin-bottom: 20px;
+        font-size: 16px;
+    }
+
+    .no-orders .btn {
+        display: inline-block;
+    }
+
+    @media (max-width: 768px) {
+        .order-history-container {
+            padding: 20px 15px;
+        }
+
+        .order-history-header h1 {
+            font-size: 24px;
+        }
+
+        .order-card-header {
+            padding: 16px;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .order-total {
+            text-align: left;
+            width: 100%;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .order-amount {
+            font-size: 20px;
+        }
+
+        .order-items-table {
+            font-size: 13px;
+        }
+
+        .order-items-table th,
+        .order-items-table td {
+            padding: 10px 12px;
+        }
+
+        .order-card-footer {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .order-actions {
+            width: 100%;
+        }
+
+        .order-action-link {
+            flex: 1;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .order-history-container {
+            padding: 15px 10px;
+        }
+
+        .order-history-header h1 {
+            font-size: 20px;
+        }
+
+        .order-card-header {
+            padding: 12px;
+        }
+
+        .order-number {
+            font-size: 16px;
+        }
+
+        .order-amount {
+            font-size: 18px;
+        }
+
+        .order-items-table {
+            font-size: 12px;
+        }
+
+        .order-items-table th,
+        .order-items-table td {
+            padding: 8px 10px;
+        }
+
+        .product-name {
+            max-width: 150px;
+            word-break: break-word;
+        }
+    }
+</style>
+
+<div class="order-history-container">
+    <div class="order-history-header">
+        <h1><i class="fa-solid fa-box-archive" style="margin-right: 12px;"></i>Your Order History</h1>
+        <p>Track and manage all your orders</p>
+    </div>
+
+    {% if orders %}
+        <div class="orders-grid">
+            {% for order in orders %}
+                <div class="order-card">
+                    <div class="order-card-header">
+                        <div class="order-info-group">
+                            <div class="order-number">
+                                <i class="fa-solid fa-hashtag"></i>Order #{{ order.id }}
+                            </div>
+                            <div class="order-date">
+                                <i class="fa-solid fa-calendar-days"></i>
+                                {{ order.created|date:"M d, Y" }}
+                            </div>
+                        </div>
+                        <div class="order-total">
+                            <div class="order-amount">₹{{ order.get_total_cost }}</div>
+                            {% if order.paid %}
+                                <span class="order-status paid">
+                                    <i class="fa-solid fa-check"></i> Paid
+                                </span>
+                            {% else %}
+                                <span class="order-status unpaid">
+                                    <i class="fa-solid fa-clock"></i> Pending
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="order-card-body">
+                        <table class="order-items-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th class="price-cell">Price</th>
+                                    <th class="quantity-cell">Qty</th>
+                                    <th class="price-cell">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.items.all %}
+                                    <tr>
+                                        <td class="product-name">{{ item.product.name }}</td>
+                                        <td class="price-cell">₹{{ item.price }}</td>
+                                        <td class="quantity-cell">{{ item.quantity }}</td>
+                                        <td class="price-cell">₹{{ item.get_cost }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="order-card-footer">
+                        <span style="color: #666; font-weight: 600;">
+                            <i class="fa-solid fa-cubes" style="margin-right: 6px;"></i>
+                            {{ order.items.all|length }} item{{ order.items.all|length|pluralize }}
+                        </span>
+                        <div class="order-actions">
+                            <a href="{% url 'orders:order_success' order.id %}" class="order-action-link order-action-primary">
+                                <i class="fa-solid fa-eye"></i>View Details
+                            </a>
+                            <a href="{% url 'products:product_list' %}" class="order-action-link order-action-secondary">
+                                <i class="fa-solid fa-arrow-right"></i>Continue Shopping
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-orders">
+            <div class="no-orders-icon">
+                <i class="fa-solid fa-inbox"></i>
+            </div>
+            <h2>No Orders Yet</h2>
+            <p>You haven't placed any orders yet. Start shopping now to see your orders here.</p>
+            <a href="{% url 'products:product_list' %}" class="btn btn-primary">
+                <i class="fa-solid fa-shopping-bag"></i> Start Shopping
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,776 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>{% block title %}E-Shop - Your Online Store{% endblock %}</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=3.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Enhanced Responsive Navbar Styles */
+        .top-bar {
+            background: #1a1a1a;
+            padding: 8px 0;
+            font-size: 12px;
+        }
+
+        .top-bar .container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .top-bar span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .top-bar .container {
+                gap: 15px;
+            }
+
+            .top-bar span {
+                font-size: 11px;
+            }
+
+            .top-bar span i {
+                font-size: 10px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .top-bar {
+                padding: 6px 0;
+                font-size: 10px;
+            }
+
+            .top-bar .container {
+                gap: 10px;
+            }
+        }
+
+        /* Navbar responsive improvements */
+        .navbar {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--secondary-color);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .logo i {
+            font-size: 28px;
+        }
+
+        .logo span {
+            display: inline;
+        }
+
+        .search-bar {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-bar form {
+            display: flex;
+            background: white;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .search-bar input {
+            flex: 1;
+            border: none;
+            padding: 10px 12px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .search-bar button {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .search-bar button:hover {
+            background: #ff8c00;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: white;
+            font-size: 13px;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .nav-item span {
+            display: none;
+        }
+
+        .cart-icon {
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: white;
+            background: none;
+            border: none;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .dropdown-toggle span {
+            display: none;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 4px;
+            min-width: 200px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+            margin-top: 8px;
+            z-index: 1001;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #333;
+            padding: 12px 16px;
+            font-size: 13px;
+            transition: background 0.3s;
+        }
+
+        .dropdown-menu a:hover {
+            background: #f5f5f5;
+            color: var(--secondary-color);
+        }
+
+        .dropdown-menu hr {
+            margin: 5px 0;
+            border: none;
+            border-top: 1px solid #eee;
+        }
+
+        .logout-form {
+            width: 100%;
+        }
+
+        .logout-form button {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #333;
+            padding: 12px 16px;
+            font-size: 13px;
+            background: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .logout-form button:hover {
+            background: #f5f5f5;
+            color: var(--secondary-color);
+        }
+
+        .categories-bar {
+            background: var(--accent-color);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .categories-menu {
+            display: flex;
+            align-items: center;
+        }
+
+        .categories-toggle {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            background: none;
+            font-size: 13px;
+            padding: 12px 16px;
+            white-space: nowrap;
+        }
+
+        .categories-list {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            flex: 1;
+            overflow-x: auto;
+            padding: 0 20px;
+            margin: 0;
+            list-style: none;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .categories-list::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-link {
+            color: #999;
+            padding: 14px 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            border-radius: 4px;
+        }
+
+        .category-link:hover {
+            color: var(--secondary-color);
+            background: rgba(255,153,0,0.1);
+        }
+
+        .category-link.active {
+            color: var(--secondary-color);
+            border-bottom-color: var(--secondary-color);
+        }
+
+        .hamburger {
+            display: none;
+            background: none;
+            color: white;
+            font-size: 24px;
+            padding: 8px;
+            margin-right: 10px;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: white;
+            z-index: 2000;
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 1999;
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .mobile-menu-close {
+            background: none;
+            color: #333;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .mobile-account,
+        .mobile-auth {
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .mobile-account h3,
+        .mobile-auth h3 {
+            padding: 10px 20px;
+            font-size: 14px;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .mobile-account a,
+        .mobile-auth a {
+            display: block;
+            color: #333;
+            padding: 12px 20px;
+            font-size: 13px;
+            transition: background 0.3s;
+        }
+
+        .mobile-account a:hover,
+        .mobile-auth a:hover {
+            background: #f5f5f5;
+            color: var(--secondary-color);
+        }
+
+        .mobile-auth .btn {
+            margin: 10px 20px;
+            display: block;
+            text-align: center;
+        }
+
+        /* Tablet (768px and below) */
+        @media (max-width: 1024px) {
+            .navbar {
+                gap: 15px;
+            }
+
+            .search-bar {
+                min-width: 150px;
+            }
+
+            .nav-item span {
+                display: none;
+            }
+        }
+
+        /* Large Mobile & Small Tablet (768px and below) */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 12px 0;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .logo i {
+                font-size: 24px;
+            }
+
+            .search-bar {
+                min-width: 120px;
+                order: 3;
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .search-bar input {
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+
+            .hamburger {
+                display: flex;
+                order: 2;
+            }
+
+            .nav-links {
+                order: 2;
+                gap: 10px;
+            }
+
+            .dropdown-toggle span {
+                display: none !important;
+            }
+
+            .categories-toggle {
+                display: flex;
+            }
+
+            .categories-list {
+                display: none;
+            }
+
+            .categories-list.active {
+                display: flex;
+                position: absolute;
+                flex-direction: column;
+                width: 100%;
+                background: var(--accent-color);
+                top: 100%;
+                left: 0;
+                border-top: 1px solid rgba(255,255,255,0.1);
+            }
+
+            .category-link {
+                padding: 14px 24px;
+                border-bottom: none;
+                width: 100%;
+                border-left: 3px solid transparent;
+                justify-content: flex-start;
+            }
+
+            .category-link.active {
+                border-left-color: var(--secondary-color);
+                border-bottom-color: transparent;
+            }
+        }
+
+        /* Small Mobile (480px and below) */
+        @media (max-width: 480px) {
+            .navbar {
+                gap: 8px;
+                padding: 10px 0;
+            }
+
+            .logo {
+                font-size: 18px;
+            }
+
+            .logo i {
+                font-size: 20px;
+            }
+
+            .logo span {
+                display: none;
+            }
+
+            .search-bar {
+                min-width: 100px;
+                flex: 1;
+            }
+
+            .search-bar input {
+                font-size: 11px;
+                padding: 6px 8px;
+            }
+
+            .nav-item {
+                font-size: 11px;
+            }
+
+            .cart-count {
+                width: 18px;
+                height: 18px;
+                font-size: 10px;
+            }
+
+            .hamburger {
+                font-size: 20px;
+                padding: 6px;
+                margin-right: 5px;
+            }
+
+            .dropdown-menu {
+                min-width: 150px;
+            }
+
+            .dropdown-menu a,
+            .logout-form button {
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+
+            .mobile-menu {
+                width: 100%;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Global CSRF token for AJAX requests -->
+    {% csrf_token %}
+    
+    <header class="header">
+        <!-- Top bar with delivery info -->
+        <div class="top-bar">
+            <div class="container">
+                <span><i class="fa-solid fa-truck"></i> Free delivery on orders over ₹500</span>
+                <span><i class="fa-solid fa-shield"></i> 100% Secure payments</span>
+            </div>
+        </div>
+
+        <!-- Main navbar -->
+        <div class="navbar container">
+            <!-- Hamburger menu for mobile -->
+            <button class="hamburger" id="hamburger">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <!-- Logo -->
+            <a href="{% url 'products:product_list' %}" class="logo">
+                <i class="fa-solid fa-store"></i>
+                <span>E-Shop</span>
+            </a>
+
+            <!-- Search bar -->
+            <div class="search-bar">
+                <form action="{% url 'products:product_list' %}" method="get">
+                    <input type="text" name="q" placeholder="Search for products, brands and more..." value="{{ request.GET.q }}" autocomplete="off">
+                    <button type="submit">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Nav links -->
+            <nav class="nav-links">
+                {% if request.user.is_authenticated %}
+                    <div class="nav-item dropdown">
+                        <button class="dropdown-toggle">
+                            <i class="fa-regular fa-user"></i>
+                            <span>Hello, {{ request.user.first_name|default:request.user.username }}</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="{% url 'users:profile' %}"><i class="fa-regular fa-user"></i> Your Account</a>
+                            <a href="{% url 'orders:order_history' %}"><i class="fa-solid fa-box"></i> Your Orders</a>
+                            <a href="{% url 'products:wishlist' %}"><i class="fa-regular fa-heart"></i> Wishlist</a>
+                            <hr>
+                            <form action="{% url 'users:logout' %}" method="post" class="logout-form">
+                                {% csrf_token %}
+                                <button type="submit"><i class="fa-solid fa-sign-out-alt"></i> Sign Out</button>
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="{% url 'users:login' %}" class="nav-item">
+                        <i class="fa-regular fa-user"></i>
+                        <span>Hello, Sign in</span>
+                    </a>
+                {% endif %}
+
+                <a href="{% url 'cart:cart_detail' %}" class="nav-item cart-icon">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>Cart</span>
+                    <span class="cart-count" id="cart-count">0</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Categories bar -->
+        <div class="categories-bar">
+            <div class="container">
+                <div class="categories-menu">
+                    <button class="categories-toggle" id="categories-toggle">
+                        <i class="fa-solid fa-bars"></i>
+                        <span>All</span>
+                    </button>
+                    <div class="categories-list" id="categories-list">
+                        <a href="{% url 'products:product_list' %}" class="category-link active">All Categories</a>
+                        {% for c in global_categories %}
+                            <a href="{% url 'products:product_list_by_category' c.slug %}" class="category-link">
+                                {% if c.icon %}<i class="fa-solid {{ c.icon }}"></i>{% endif %}
+                                {{ c.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile menu overlay -->
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
+
+    <!-- Mobile menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <div class="mobile-menu-header">
+            <div class="mobile-user-info">
+                {% if request.user.is_authenticated %}
+                    <i class="fa-regular fa-user"></i>
+                    <span>{{ request.user.first_name|default:request.user.username }}</span>
+                {% else %}
+                    <i class="fa-regular fa-user"></i>
+                    <span>Sign in</span>
+                {% endif %}
+            </div>
+            <button class="mobile-menu-close" id="mobile-menu-close">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="mobile-menu-content">
+            <div class="mobile-categories">
+                <h3>Shop by Category</h3>
+                <a href="{% url 'products:product_list' %}">All Categories</a>
+                {% for c in global_categories %}
+                    <a href="{% url 'products:product_list_by_category' c.slug %}">{{ c.name }}</a>
+                {% endfor %}
+            </div>
+            {% if request.user.is_authenticated %}
+                <div class="mobile-account">
+                    <h3>Your Account</h3>
+                    <a href="{% url 'users:profile' %}">Your Account</a>
+                    <a href="{% url 'orders:order_history' %}">Your Orders</a>
+                    <a href="{% url 'products:wishlist' %}">Wishlist</a>
+                    <a href="{% url 'users:logout' %}">Sign Out</a>
+                </div>
+            {% else %}
+                <div class="mobile-auth">
+                    <a href="{% url 'users:login' %}" class="btn btn-primary">Sign In</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <main class="main-content">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        <i class="fa-solid fa-{{ message.tags|default:'info' }}"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Get to Know Us</h3>
+                    <a href="#">About E-Shop</a>
+                    <a href="#">Careers</a>
+                    <a href="#">Press Releases</a>
+                    <a href="#">E-Shop Science</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Make Money with Us</h3>
+                    <a href="#">Sell on E-Shop</a>
+                    <a href="#">Become an Affiliate</a>
+                    <a href="#">Advertise Your Products</a>
+                    <a href="#">Self-Publish with Us</a>
+                </div>
+                <div class="footer-section">
+                    <h3>E-Shop Payment Products</h3>
+                    <a href="#">E-Shop Business Card</a>
+                    <a href="#">Shop with Points</a>
+                    <a href="#">Reload Your Balance</a>
+                    <a href="#">E-Shop Currency Converter</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Let Us Help You</h3>
+                    <a href="#">E-Shop and COVID-19</a>
+                    <a href="#">Your Account</a>
+                    <a href="#">Your Orders</a>
+                    <a href="#">Shipping Rates & Policies</a>
+                    <a href="#">Returns & Replacements</a>
+                    <a href="#">Manage Your Content and Devices</a>
+                    <a href="#">Help</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-logo">
+                    <a href="{% url 'products:product_list' %}">
+                        <i class="fa-solid fa-store"></i> E-Shop
+                    </a>
+                </div>
+                <div class="footer-links">
+                    <a href="#">Conditions of Use</a>
+                    <a href="#">Privacy Notice</a>
+                    <a href="#">Interest-Based Ads</a>
+                </div>
+                <div class="footer-copyright">
+                    <p>&copy; 2026 E-Shop. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/main.js' %}?v=2.0"></script>
+</body>
+</html>

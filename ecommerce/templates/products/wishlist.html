@@ -1,0 +1,389 @@
+{% extends 'base.html' %}
+{% load wishlist_tags %}
+
+{% block title %}My Wishlist - E-Shop{% endblock %}
+
+{% block content %}
+<style>
+    .wishlist-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .wishlist-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .wishlist-header h1 {
+        font-size: 36px;
+        color: #1a1a1a;
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+
+    .wishlist-header p {
+        color: #666;
+        font-size: 16px;
+    }
+
+    .wishlist-count {
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    .empty-wishlist {
+        text-align: center;
+        padding: 80px 20px;
+    }
+
+    .empty-wishlist i {
+        font-size: 80px;
+        color: #ddd;
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    .empty-wishlist h2 {
+        font-size: 24px;
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    .empty-wishlist p {
+        color: #999;
+        margin-bottom: 30px;
+        font-size: 15px;
+    }
+
+    .empty-wishlist a {
+        display: inline-block;
+        padding: 12px 30px;
+        background: linear-gradient(135deg, var(--primary-color) 0%, #ff9500 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .empty-wishlist a:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 165, 0, 0.3);
+    }
+
+    .wishlist-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .wishlist-item-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    .wishlist-item-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .wishlist-item-image {
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+        background: #f5f5f5;
+        position: relative;
+    }
+
+    .wishlist-item-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 10px;
+    }
+
+    .wishlist-item-image-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f5f5f5;
+    }
+
+    .wishlist-item-content {
+        padding: 20px;
+    }
+
+    .wishlist-item-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 10px;
+        display: block;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        line-height: 1.4;
+        min-height: 42px;
+    }
+
+    .wishlist-item-title:hover {
+        color: var(--primary-color);
+    }
+
+    .wishlist-item-price {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 12px;
+    }
+
+    .wishlist-item-rating {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 15px;
+        font-size: 12px;
+    }
+
+    .wishlist-item-stars {
+        color: #ffc107;
+    }
+
+    .wishlist-item-reviews {
+        color: #666;
+    }
+
+    .wishlist-item-stock {
+        font-size: 13px;
+        margin-bottom: 15px;
+    }
+
+    .stock-in {
+        color: #28a745;
+        font-weight: 600;
+    }
+
+    .stock-out {
+        color: #dc3545;
+        font-weight: 600;
+    }
+
+    .wishlist-item-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .wishlist-add-cart-btn {
+        flex: 1;
+        min-width: 120px;
+        padding: 10px;
+        background: linear-gradient(135deg, var(--primary-color) 0%, #ff9500 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+        transition: all 0.3s ease;
+    }
+
+    .wishlist-add-cart-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 165, 0, 0.3);
+    }
+
+    .wishlist-add-cart-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .wishlist-remove-btn {
+        padding: 10px 15px;
+        background: #f5f5f5;
+        color: #dc3545;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+        transition: all 0.3s ease;
+    }
+
+    .wishlist-remove-btn:hover {
+        background: #ffebee;
+        border-color: #dc3545;
+    }
+
+    .wishlist-actions-bar {
+        text-align: center;
+        padding: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .continue-shopping-btn {
+        display: inline-block;
+        padding: 12px 30px;
+        background: white;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+        border-radius: 6px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .continue-shopping-btn:hover {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .wishlist-container {
+            padding: 30px 15px;
+        }
+
+        .wishlist-header h1 {
+            font-size: 26px;
+        }
+
+        .wishlist-grid {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .wishlist-item-image {
+            height: 150px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .wishlist-header h1 {
+            font-size: 22px;
+        }
+
+        .wishlist-grid {
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+        }
+
+        .wishlist-item-content {
+            padding: 15px;
+        }
+
+        .wishlist-item-image {
+            height: 130px;
+        }
+
+        .wishlist-item-actions {
+            flex-direction: column;
+        }
+
+        .wishlist-add-cart-btn,
+        .wishlist-remove-btn {
+            min-width: unset;
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="wishlist-container">
+    <div class="wishlist-header">
+        <h1>My Wishlist</h1>
+        <p><span class="wishlist-count">{{ total_items }}</span> item{% if total_items != 1 %}s{% endif %} saved</p>
+    </div>
+
+    {% if wishlist_products %}
+        <div class="wishlist-grid">
+            {% for product in wishlist_products %}
+            <div class="wishlist-item-card">
+                <div class="wishlist-item-image">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="wishlist-item-image-placeholder">
+                            <i class="fa-solid fa-image fa-3x" style="color: #ccc;"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="wishlist-item-content">
+                    <a href="{% url 'products:product_detail' product.id product.slug %}" class="wishlist-item-title">
+                        {{ product.name }}
+                    </a>
+                    <div class="wishlist-item-price">₹{{ product.price|floatformat:0 }}</div>
+                    
+                    <div class="wishlist-item-rating">
+                        <span class="wishlist-item-stars">
+                            {% for i in "12345"|make_list %}
+                                {% if forloop.counter <= product.get_average_rating %}★{% else %}☆{% endif %}
+                            {% endfor %}
+                        </span>
+                        <span class="wishlist-item-reviews">({{ product.get_review_count }})</span>
+                    </div>
+
+                    <div class="wishlist-item-stock">
+                        {% if product.stock > 0 %}
+                            <span class="stock-in">✓ In Stock</span>
+                        {% else %}
+                            <span class="stock-out">✗ Out of Stock</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="wishlist-item-actions">
+                        <form action="{% url 'cart:cart_add' product.id %}" method="post" style="flex: 1; min-width: 120px;">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="wishlist-add-cart-btn" {% if product.stock == 0 %}disabled{% endif %}>
+                                <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                            </button>
+                        </form>
+                        <button class="wishlist-remove-btn" onclick="removeFromWishlist({{ product.id }})">
+                            <i class="fa-solid fa-trash"></i> Remove
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="wishlist-actions-bar">
+            <a href="{% url 'products:product_list' %}" class="continue-shopping-btn">
+                <i class="fa-solid fa-arrow-left"></i> Continue Shopping
+            </a>
+        </div>
+    {% else %}
+        <div class="empty-wishlist">
+            <i class="fa-solid fa-heart"></i>
+            <h2>Your Wishlist is Empty</h2>
+            <p>Start adding your favorite products to your wishlist!</p>
+            <a href="{% url 'products:product_list' %}">Browse Products</a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+function removeFromWishlist(productId) {
+    if(confirm('Remove this item from your wishlist?')) {
+        fetch(`/wishlist/add/${productId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || '',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            if(response.ok) {
+                location.reload();
+            }
+        });
+    }
+}
+</script>
+
+{% endblock %}

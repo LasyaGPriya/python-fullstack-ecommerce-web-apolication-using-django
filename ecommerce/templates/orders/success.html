@@ -1,0 +1,398 @@
+{% extends 'base.html' %}
+
+{% block title %}Order Placed Successfully - E-Shop{% endblock %}
+
+{% block content %}
+<style>
+    .order-success-container {
+        min-height: calc(100vh - 400px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .order-success-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        width: 100%;
+        max-width: 800px;
+        padding: 60px 40px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .order-success-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), #ff9500);
+    }
+
+    .success-icon {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 30px;
+        box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+        animation: successPulse 2s infinite;
+    }
+
+    .success-icon i {
+        font-size: 60px;
+        color: white;
+    }
+
+    @keyframes successPulse {
+        0%, 100% {
+            transform: scale(1);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+        }
+        50% {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(76, 175, 80, 0.4);
+        }
+    }
+
+    .order-success-title {
+        font-size: 36px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 15px;
+    }
+
+    .order-success-subtitle {
+        font-size: 18px;
+        color: #666;
+        margin-bottom: 30px;
+        line-height: 1.5;
+    }
+
+    .order-details {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 30px;
+        margin: 30px 0;
+        border-left: 4px solid var(--primary-color);
+    }
+
+    .order-number {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 10px;
+    }
+
+    .order-info {
+        color: #666;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .order-info p {
+        margin: 5px 0;
+    }
+
+    .order-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 40px;
+    }
+
+    .order-action-btn {
+        padding: 14px 30px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 160px;
+        justify-content: center;
+    }
+
+    .order-action-btn.primary {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #ff9500 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(255, 165, 0, 0.3);
+    }
+
+    .order-action-btn.primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 165, 0, 0.4);
+    }
+
+    .order-action-btn.secondary {
+        background: white;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+    }
+
+    .order-action-btn.secondary:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .order-timeline {
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 1px solid #eee;
+    }
+
+    .timeline-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 20px;
+    }
+
+    .timeline-steps {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 600px;
+        margin: 0 auto;
+        position: relative;
+    }
+
+    .timeline-steps::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #e0e0e0;
+        z-index: 1;
+    }
+
+    .timeline-step {
+        background: white;
+        border: 2px solid #e0e0e0;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 2;
+        color: #999;
+    }
+
+    .timeline-step.active {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+
+    .timeline-step.completed {
+        background: #4CAF50;
+        border-color: #4CAF50;
+        color: white;
+    }
+
+    .timeline-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .timeline-label {
+        font-size: 12px;
+        color: #666;
+        text-align: center;
+        width: 80px;
+    }
+
+    .timeline-label.active {
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    .help-section {
+        margin-top: 40px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .help-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 10px;
+    }
+
+    .help-text {
+        color: #666;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+        .order-success-container {
+            padding: 20px 15px;
+            min-height: calc(100vh - 300px);
+        }
+
+        .order-success-card {
+            padding: 40px 25px;
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 25px;
+        }
+
+        .success-icon i {
+            font-size: 50px;
+        }
+
+        .order-success-title {
+            font-size: 28px;
+        }
+
+        .order-success-subtitle {
+            font-size: 16px;
+        }
+
+        .order-details {
+            padding: 20px;
+        }
+
+        .order-actions {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .order-action-btn {
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .timeline-steps {
+            max-width: 100%;
+        }
+
+        .timeline-labels {
+            max-width: 100%;
+        }
+
+        .timeline-label {
+            width: auto;
+            font-size: 11px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .order-success-card {
+            padding: 30px 20px;
+        }
+
+        .order-success-title {
+            font-size: 24px;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+        }
+
+        .success-icon i {
+            font-size: 40px;
+        }
+
+        .order-details {
+            padding: 15px;
+        }
+
+        .order-number {
+            font-size: 20px;
+        }
+    }
+</style>
+
+<div class="order-success-container">
+    <div class="order-success-card">
+        <div class="success-icon">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+
+        <h1 class="order-success-title">Order Placed Successfully!</h1>
+        <p class="order-success-subtitle">Thank you for shopping with E-Shop. Your order has been confirmed and is being processed.</p>
+
+        <div class="order-details">
+            <div class="order-number">Order #{{ order.id }}</div>
+            <div class="order-info">
+                <p><strong>Order Date:</strong> {{ order.created|date:"F j, Y \a\t g:i A" }}</p>
+                <p><strong>Total Amount:</strong> ₹{{ order.get_total_cost }}</p>
+                <p><strong>Payment Method:</strong> {{ order.payment_method|default:"Cash on Delivery" }}</p>
+                <p><strong>Estimated Delivery:</strong> 3-5 Business Days</p>
+            </div>
+        </div>
+
+        <div class="order-timeline">
+            <h3 class="timeline-title">Order Status</h3>
+            <div class="timeline-steps">
+                <div class="timeline-step completed">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <div class="timeline-step active">
+                    <i class="fa-solid fa-box"></i>
+                </div>
+                <div class="timeline-step">
+                    <i class="fa-solid fa-truck"></i>
+                </div>
+                <div class="timeline-step">
+                    <i class="fa-solid fa-house"></i>
+                </div>
+            </div>
+            <div class="timeline-labels">
+                <div class="timeline-label completed">Order Placed</div>
+                <div class="timeline-label active">Processing</div>
+                <div class="timeline-label">Shipped</div>
+                <div class="timeline-label">Delivered</div>
+            </div>
+        </div>
+
+        <div class="order-actions">
+            <a href="{% url 'orders:order_history' %}" class="order-action-btn primary">
+                <i class="fa-solid fa-list"></i>
+                Track Order
+            </a>
+            <a href="{% url 'products:product_list' %}" class="order-action-btn secondary">
+                <i class="fa-solid fa-arrow-left"></i>
+                Continue Shopping
+            </a>
+        </div>
+
+        <div class="help-section">
+            <h4 class="help-title">Need Help?</h4>
+            <p class="help-text">
+                Check your email for order confirmation and tracking details.
+                For any questions, contact our support team at support@eshop.com
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment - E-Shop{% endblock %}
+
+{% block content %}
+<div class="form-container" style="text-align: center;">
+    <h2>Payment for Order #{{ order.id }}</h2>
+    <p style="margin: 20px 0;">Total amount to pay: <strong>₹{{ order.get_total_cost }}</strong></p>
+    
+    <div style="background: #f5f5f5; padding: 20px; border-radius: 4px; margin-bottom: 20px;">
+        <p><i class="fa-solid fa-credit-card fa-3x" style="color: #666;"></i></p>
+        <p style="margin-top: 10px; color: #666;">Dummy Payment Gateway</p>
+    </div>
+    
+    <form action="." method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary btn-block" style="background-color: var(--success-color);">
+            Confirm Payment
+        </button>
+    </form>
+</div>
+{% endblock %}

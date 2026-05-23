@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load wishlist_tags %}
+
+{% block title %}Products - E-Shop{% endblock %}
+
+{% block content %}
+<!-- Homepage Banner -->
+<div class="banner">
+    <div class="container">
+        <h1>Welcome to E-Shop</h1>
+        <p>Discover amazing products at unbeatable prices. Free delivery on orders over ₹500!</p>
+        <a href="#products" class="btn btn-primary">Shop Now</a>
+    </div>
+</div>
+
+<div id="products">
+<div class="product-grid">
+    {% for product in products %}
+    <div class="product-card">
+        <div class="product-image-container">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+            {% else %}
+                <div class="product-image-placeholder">
+                    <i class="fa-solid fa-image fa-3x"></i>
+                </div>
+            {% endif %}
+        </div>
+        <div class="product-card-content">
+            <a href="{% url 'products:product_detail' product.id product.slug %}">
+                <h3 class="product-title">{{ product.name }}</h3>
+            </a>
+            <div class="product-rating">
+                <div class="product-stars">
+                    {% for i in "12345"|make_list %}
+                        {% if forloop.counter <= product.get_average_rating %}
+                            ★
+                        {% else %}
+                            ☆
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <span class="product-reviews-count">({{ product.get_review_count }})</span>
+            </div>
+            <div class="product-price">₹{{ product.price|floatformat:0 }}</div>
+            <div class="product-card-actions">
+                <form action="{% url 'cart:cart_add' product.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="quantity" value="1">
+                    <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
+                </form>
+                {% if request.user.is_authenticated %}
+                    <button type="button" 
+                            class="wishlist-btn {% if product|is_in_wishlist:request.user %}active{% endif %}"
+                            data-product-id="{{ product.id }}"
+                            onclick="event.preventDefault(); toggleWishlist({{ product.id }})">
+                        <i class="fa-{% if product|is_in_wishlist:request.user %}solid{% else %}regular{% endif %} fa-heart"></i>
+                    </button>
+                {% else %}
+                    <a href="{% url 'users:login' %}?next={{ request.path }}" class="wishlist-btn" title="Login to add to wishlist">
+                        <i class="fa-regular fa-heart"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-32">
+        <i class="fa-solid fa-search fa-3x text-muted mb-16"></i>
+        <h3 class="text-muted">No products found</h3>
+        <p class="text-muted">Try adjusting your search or browse all products</p>
+        <a href="{% url 'products:product_list' %}" class="btn btn-primary mt-16">Browse All Products</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

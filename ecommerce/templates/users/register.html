@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - E-Shop{% endblock %}
+
+{% block content %}
+<style>
+    .register-container {
+        min-height: calc(100vh - 400px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .register-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        width: 100%;
+        max-width: 500px;
+        padding: 40px;
+    }
+
+    .register-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .register-header h2 {
+        font-size: 32px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 10px;
+    }
+
+    .register-header p {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        font-family: inherit;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.1);
+    }
+
+    .form-group input::placeholder {
+        color: #999;
+    }
+
+    .form-group ul {
+        margin: 8px 0 0 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .form-group li {
+        color: #d32f2f;
+        font-size: 12px;
+        margin-bottom: 4px;
+        padding-left: 16px;
+        position: relative;
+    }
+
+    .form-group li:before {
+        content: "•";
+        position: absolute;
+        left: 0;
+    }
+
+    .register-errors {
+        color: #d32f2f;
+        font-size: 13px;
+        margin-top: 6px;
+        padding: 8px 12px;
+        background-color: #ffebee;
+        border-radius: 4px;
+        border-left: 3px solid #d32f2f;
+    }
+
+    .register-btn {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, var(--primary-color) 0%, #ff9500 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+    }
+
+    .register-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 165, 0, 0.3);
+    }
+
+    .register-btn:active {
+        transform: translateY(0);
+    }
+
+    .register-footer {
+        text-align: center;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .register-footer p {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .register-footer a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+
+    .register-footer a:hover {
+        color: #e89e00;
+        text-decoration: underline;
+    }
+
+    .password-requirements {
+        background-color: #f5f5f5;
+        border-radius: 6px;
+        padding: 12px;
+        margin-top: 10px;
+        font-size: 12px;
+    }
+
+    .password-requirements strong {
+        display: block;
+        color: #333;
+        margin-bottom: 6px;
+    }
+
+    @media (max-width: 600px) {
+        .register-container {
+            padding: 20px 15px;
+            min-height: calc(100vh - 300px);
+        }
+
+        .register-card {
+            padding: 30px 20px;
+        }
+
+        .register-header h2 {
+            font-size: 24px;
+        }
+
+        .register-btn {
+            padding: 11px;
+            font-size: 15px;
+        }
+    }
+</style>
+
+<div class="register-container">
+    <div class="register-card">
+        <div class="register-header">
+            <h2>Create Account</h2>
+            <p>Join E-Shop and start shopping today</p>
+        </div>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="register-errors">
+                    {{ form.non_field_errors.0 }}
+                </div>
+            {% endif %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="register-errors">
+                            {% for error in field.errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if field.help_text %}
+                        <div class="password-requirements">
+                            <strong>Password Requirements:</strong>
+                            {{ field.help_text|safe }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="register-btn">Create Account</button>
+        </form>
+
+        <div class="register-footer">
+            <p>Already have an account? <a href="{% url 'users:login' %}">Sign in</a></p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
